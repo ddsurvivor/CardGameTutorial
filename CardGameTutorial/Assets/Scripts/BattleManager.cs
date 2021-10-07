@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +6,7 @@ public enum GamePhase
 {
     playerDraw, playerAction, enemyDraw, enemyAction, gameStart
 }
-public class BattleManager : MonoBehaviour
+public class BattleManager : MonoSingleton<BattleManager>
 {
     public GameObject playerData; // 数据
     public GameObject enemyData;
@@ -22,6 +22,7 @@ public class BattleManager : MonoBehaviour
     public GameObject arrowPrefab;//召唤指示箭头
     public GameObject attackPrefab;//攻击指示箭头
     private GameObject arrow;
+
 
     // 生命值
     public int playerHealthPoint;
@@ -40,7 +41,7 @@ public class BattleManager : MonoBehaviour
     public GamePhase currentPhase = GamePhase.playerDraw;
 
 
-    private CardData CardDate;
+    protected CardData CardDate;
 
     public Transform canvas;
 
@@ -53,10 +54,7 @@ public class BattleManager : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
-        playerSummonCount = maxPlayerSummonCount;
-        enemySummonCount = maxEnemySummonCount;
-        CardDate = playerData.GetComponent<CardData>();
+    {      
         GameStart();
     }
 
@@ -70,19 +68,17 @@ public class BattleManager : MonoBehaviour
     {
         if (currentPhase == GamePhase.playerDraw)
         {
-            DrawCard(0, 1);
-            currentPhase = GamePhase.playerAction;
+            DrawCard(0, 1);           
         }
     }
     public void OnEnemyDrawCard()
     {
         if (currentPhase == GamePhase.enemyDraw)
         {
-            DrawCard(1, 1);
-            currentPhase = GamePhase.enemyAction;
+            DrawCard(1, 1);  
         }
     }
-    public void DrawCard(int _player, int _number)
+    public void DrawCard(int _player, int _number, bool _back = false, bool _state=true)
     {
         if (_player == 0)
         {
@@ -92,6 +88,15 @@ public class BattleManager : MonoBehaviour
                 newCard.GetComponent<CardDisplay>().card = playerDeckList[0];
                 playerDeckList.RemoveAt(0);
                 newCard.GetComponent<BattleCard>().cardState = CardState.inPlayerHand;
+                // 显示卡背
+                if (_back)
+                {
+                    newCard.GetComponent<CardDisplay>().back = true;
+                }
+                if (_state)
+                {
+                    currentPhase = GamePhase.playerAction;
+                }
             }
 
         }
@@ -103,12 +108,20 @@ public class BattleManager : MonoBehaviour
                 newCard.GetComponent<CardDisplay>().card = enemyDeckList[0];
                 enemyDeckList.RemoveAt(0);
                 newCard.GetComponent<BattleCard>().cardState = CardState.inEnemyHand;
+                // 显示卡背
+                if (_back)
+                {
+                    newCard.GetComponent<CardDisplay>().back = true;
+                }
+                if (_state)
+                {
+                    currentPhase = GamePhase.enemyAction;
+                }
             }
-
-        }
+        }     
     }
 
-    public void OnClickTurnEnd()
+    public virtual void OnClickTurnEnd()
     {
         TurnEnd();
     }
@@ -209,9 +222,16 @@ public class BattleManager : MonoBehaviour
         waitingMonster = null;
     }
 
+    /// <summary>
+    /// 召唤怪兽
+    /// </summary>
+    /// <param name="_monster">要召唤的怪兽卡物体</param>
+    /// <param name="_id">召唤者编号</param>
+    /// <param name="_block">要召唤到的格子节点</param>
     public void Summon(GameObject _monster, int _id, Transform _block)
     {
         _monster.transform.SetParent(_block);
+        _monster.GetComponent<CardDisplay>().ShowCard();
         _block.GetComponent<CardBlock>().monsterCard = _monster;
         //_block.GetComponent<CardBlock>().hasMonster = true;
         _monster.transform.localPosition = Vector3.zero;
@@ -329,8 +349,12 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    public void GameStart() // 游戏开始，读取卡组，抽五张手牌
+    public virtual void GameStart() // 游戏开始，读取卡组，抽五张手牌
     {
+        playerSummonCount = maxPlayerSummonCount;
+        enemySummonCount = maxEnemySummonCount;
+        CardDate = playerData.GetComponent<CardData>();
+
         currentPhase = GamePhase.gameStart;
         ReadDeck();
         //Debug.Log(currentPhase);

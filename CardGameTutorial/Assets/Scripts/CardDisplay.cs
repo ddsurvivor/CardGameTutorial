@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +17,9 @@ public class CardDisplay : MonoBehaviour
     public Color monsterColor;
     public Color itemColor;
     public Color spellColor;
+
+    public bool back;
+    public GameObject backImage;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,8 +28,17 @@ public class CardDisplay : MonoBehaviour
         // ColorUtility.TryParseHtmlString("#79548E", out spellColor);
         if (card != null)
         {
-            ShowCard();
+            if (back)
+            {
+                ShowBack();
+            }
+            else
+            {
+                ShowCard();
+            }
+            
         }
+
     }
 
     // Update is called once per frame
@@ -36,6 +48,8 @@ public class CardDisplay : MonoBehaviour
     }
     public void ShowCard()
     {
+        backImage.SetActive(false);
+
         cardName.text = card.cardName;
         if (card is MonsterCard) // 如果是怪兽卡，就将攻击力显示为红色，生命值为绿色
         {
@@ -63,6 +77,10 @@ public class CardDisplay : MonoBehaviour
             background.color = spellColor;
             infoText.text = spellcard.effect;
         }
+    }
 
+    public void ShowBack()
+    {
+        backImage.SetActive(true);
     }
 }

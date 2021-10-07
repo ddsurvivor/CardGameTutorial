@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -10,11 +10,11 @@ public class CardBlock : MonoBehaviour, IPointerClickHandler
     public bool hasMonster;
     public GameObject monsterCard;
 
-    public BattleManager BattleManager;
+    //public BattleManager BattleManager;
     // Start is called before the first frame update
     void Start()
     {
-        BattleManager = GameObject.Find("BattleManager").GetComponent<BattleManager>();
+        //BattleManager = GameObject.Find("AIBattleManager").GetComponent<BattleManager>();
     }
 
     // Update is called once per frame
@@ -40,7 +40,7 @@ public class CardBlock : MonoBehaviour, IPointerClickHandler
     {
         if (summonBlock.activeInHierarchy)
         {
-            BattleManager.SummonCofirm(transform);
+            BattleManager.Instance.SummonCofirm(transform);
             //hasMonster = true;
         }
         //Debug.Log("click block");
