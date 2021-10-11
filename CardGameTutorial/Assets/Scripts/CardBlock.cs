@@ -7,7 +7,7 @@ public class CardBlock : MonoBehaviour, IPointerClickHandler
 {
     public GameObject summonBlock;
     public GameObject attackBlock;// not require
-    public bool hasMonster;
+    //public bool hasMonster;
     public GameObject monsterCard;
 
     //public BattleManager BattleManager;

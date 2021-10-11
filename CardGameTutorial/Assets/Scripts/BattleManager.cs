@@ -1,11 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public enum GamePhase
 {
     playerDraw, playerAction, enemyDraw, enemyAction, gameStart
 }
+/*public enum GameEvent
+{
+    phaseChange, monsterDestroy
+}*/
 public class BattleManager : MonoSingleton<BattleManager>
 {
     public GameObject playerData; // 数据
@@ -50,6 +55,9 @@ public class BattleManager : MonoSingleton<BattleManager>
     private int waitingID;
     public GameObject attackingMonster;
     private int attackingID;
+
+    // private Dictionary<string, UnityEvent> eventDic = new Dictionary<string, UnityEvent>();
+    public UnityEvent phaseChangeEvent;
 
 
     // Start is called before the first frame update
@@ -96,6 +104,7 @@ public class BattleManager : MonoSingleton<BattleManager>
                 if (_state)
                 {
                     currentPhase = GamePhase.playerAction;
+                    phaseChangeEvent.Invoke();
                 }
             }
 
@@ -116,6 +125,7 @@ public class BattleManager : MonoSingleton<BattleManager>
                 if (_state)
                 {
                     currentPhase = GamePhase.enemyAction;
+                    phaseChangeEvent.Invoke();
                 }
             }
         }     
@@ -127,6 +137,7 @@ public class BattleManager : MonoSingleton<BattleManager>
     }
     public void TurnEnd()
     {
+        phaseChangeEvent.Invoke();
         if (arrow != null)
         {
             Destroy(arrow);

@@ -9,13 +9,13 @@ public class TurnStateDisplayer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        BattleManager.Instance.phaseChangeEvent.AddListener(UpdateTurnText);
     }
 
     // Update is called once per frame
     void Update()
     {
-        UpdateTurnText();  
+        //UpdateTurnText();  
     }
 
     void UpdateTurnText()
