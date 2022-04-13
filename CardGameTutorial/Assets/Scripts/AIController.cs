@@ -25,16 +25,20 @@ public class AIController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (actionTime <= 0)
+        if (AIManager.Instance.currentPhase == GamePhase.enemyDraw || BattleManager.Instance.currentPhase == GamePhase.enemyAction)
         {
-            NextStep();
-            Debug.Log("Next step");
-            actionTime = actionTimeStart;
+            if (actionTime <= 0)
+            {
+                NextStep();
+                Debug.Log("Next step");
+                actionTime = actionTimeStart;
+            }
+            else
+            {
+                actionTime -= Time.deltaTime;
+            }
         }
-        else
-        {
-            actionTime -= Time.deltaTime;
-        }
+        
         
         
     }
@@ -79,10 +83,25 @@ public class AIController : MonoBehaviour
             {
                 foreach (var block in BattleManager.Instance.enemyBlocks)
                 {
-                    if (block.GetComponent<CardBlock>().monsterCard != null)
+                    if (block.GetComponent<CardBlock>().monsterCard != null && !block.GetComponent<CardBlock>().monsterCard.GetComponent<BattleCard>().hasAttacked)
                     {
+                        currentMonster = block.GetComponent<CardBlock>().monsterCard;
                         // 搜索怪兽
+                        foreach (var playerBlock in BattleManager.Instance.playerBlocks)
+                        {
+                            if (playerBlock.GetComponent<CardBlock>().monsterCard != null)
+                            {
+                                Debug.Log("开始攻击");
+                                BattleManager.Instance.Attack(currentMonster, 1, playerBlock.GetComponent<CardBlock>().monsterCard);
+                                break;
+                            }
+                            Debug.Log("回合结束");
+                            BattleManager.Instance.TurnEnd();
+                        }
+                        break;
                     }
+                    Debug.Log("回合结束");
+                    BattleManager.Instance.TurnEnd();
                 }
 
             }

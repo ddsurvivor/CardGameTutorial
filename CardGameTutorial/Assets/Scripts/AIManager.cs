@@ -23,12 +23,12 @@ public class AIManager : BattleManager
         enemySummonCount = maxEnemySummonCount;
         CardDate = playerData.GetComponent<CardData>();
 
-        currentPhase = GamePhase.gameStart;
         ReadDeck();
         //Debug.Log(currentPhase);
         DrawCard(0, 5);
         DrawCard(1, 5,true);
         currentPhase = GamePhase.playerDraw;
+        phaseChangeEvent.Invoke();
         //Debug.Log(currentPhase);
     }
     public override void OnClickTurnEnd()
