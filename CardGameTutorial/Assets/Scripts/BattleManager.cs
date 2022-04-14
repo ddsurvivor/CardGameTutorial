@@ -137,7 +137,7 @@ public class BattleManager : MonoSingleton<BattleManager>
     }
     public void TurnEnd()
     {
-        phaseChangeEvent.Invoke();
+        
         if (arrow != null)
         {
             Destroy(arrow);
@@ -188,6 +188,7 @@ public class BattleManager : MonoSingleton<BattleManager>
                 }
             }
         }
+        phaseChangeEvent.Invoke();
     }
 
 
@@ -338,8 +339,8 @@ public class BattleManager : MonoSingleton<BattleManager>
         // 
         var attackMonster = _monster.GetComponent<CardDisplay>().card as MonsterCard;
         var targetMonster = _target.GetComponent<CardDisplay>().card as MonsterCard;
+        //Debug.Log(targetMonster.healthPoint);
         targetMonster.GetDamage(attackMonster.attack);
-        Debug.Log(targetMonster.healthPoint);
         if (targetMonster.healthPoint > 0)
         {
             _target.GetComponent<CardDisplay>().ShowCard();
